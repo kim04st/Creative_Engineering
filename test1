@@ -50,3 +50,87 @@ void draw(){
 
 5. 스마트폰에서 ON 버튼을 누르면 서버를 거쳐 아두이노의 7번 핀의 LED 켜지고, off 버튼을 누르면 7번 핀의 LED가 꺼진다. 스마트폰의 텍스트 박스에 숫자 1부터 8중에 하나를 넣고 send 버튼을 누르면
 아두이노의 4번 핀에 달린 피에조 스피커가 도, 레, ~ 시, 도 가 작동되도록 하시오.
+----------------------------------------------------------------------------------------------------
+아두이노
+----------------------------------------------------------------------------------------------------
+int ledPin = 7; // LED를 연결한 핀 (7번 핀)
+int speakerPin = 4; // 피에조 스피커를 연결한 핀 (4번 핀)
+
+void setup() {
+  pinMode(7, OUTPUT);
+  pinMode(4, OUTPUT);
+  Serial.begin(9600); // 시리얼 통신을 초기화합니다.
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char command = Serial.read(); // 시리얼 통신으로부터 명령을 읽습니다.
+
+    if (command == "ON") {
+      digitalWrite(ledPin, HIGH); // LED를 켭니다.
+    } else if (command == "OFF") {
+      digitalWrite(ledPin, LOW); // LED를 끕니다.
+    } else if (command >= '1' && command <= '8') {
+      int frequency = 0;
+      // 입력된 숫자에 따라 피에조 스피커의 주파수를 설정합니다.
+      switch (command) {
+        case '1': frequency = 261; // 도
+        break;
+        case '2': frequency = 293; // 레
+        break;
+        case '3': frequency = 329; // 미
+        break;
+        case '4': frequency = 349; // 파
+        break;
+        case '5': frequency = 392; // 솔
+        break;
+        case '6': frequency = 440; // 라
+        break;
+        case '7': frequency = 493; // 시
+        break;
+        case '8': frequency = 523; // 도 (고음)
+        break;
+      }
+      tone(speakerPin, frequency); // 피에조 스피커를 주어진 주파수로 설정합니다.
+      delay(500); // 0.5초 동안 소리를 유지합니다.
+      noTone(speakerPin); // 소리를 끕니다.
+    }
+  }
+}
+----------------------------------------------------------------------------------------------------
+processing
+----------------------------------------------------------------------------------------------------
+import processing.net.*;
+
+Server server; // 서버 객체
+Client client; // 클라이언트 객체
+
+void setup() {
+  size(200, 200);
+  server = new Server(this, 12345); // 서버를 12345 포트에서 시작합니다.
+}
+
+void draw() {
+  background(255);
+  if (client != null) {
+    if (client.available() > 0) {
+      String message = client.readString(); // 클라이언트로부터 메시지를 읽습니다.
+      println("Received: " + message);
+
+      // 아두이노로 메시지 전송
+      if (message.equals("ON") || message.equals("OFF")) {
+        client.write(message); // 클라이언트로부터 받은 메시지를 아두이노로 전송합니다.
+      } 
+      // 숫자를 아두이노로 전송
+      else if (message.equals("1") || message.equals("2") || message.equals("3") ||
+               message.equals("4") || message.equals("5") || message.equals("6") ||
+               message.equals("7") || message.equals("8")) {
+        client.write(message); // 클라이언트로부터 받은 숫자를 아두이노로 전송합니다.
+      }
+    }
+  }
+}
+
+void serverEvent(Server s, Client c) {
+  client = c; // 클라이언트가 연결되었을 때 클라이언트 객체를 설정합니다.
+}
