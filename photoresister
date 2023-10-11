@@ -42,3 +42,4 @@ void draw() {
   }
 }
 아두이노에서 값을 받아와 프로세싱 윈도우 창에 조도센서의 값을 출력하고 500이상일 때 배경화면의 색을 보라색, 미만일 때는 파란색으로 변경하는 코드
+<img width="50%" src="https://user-images.githubusercontent.com/127822697/274198573-60740bf4-e5bf-4837-9bee-728a12b53210.jpg"/>
