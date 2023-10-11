@@ -1,0 +1,44 @@
+아두이노 코드
+void setup() {
+  pinMode(13,OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int a = analogRead(A0);
+
+  if(a < 500) digitalWrite(13,HIGH);
+  else digitalWrite(13,LOW);
+
+  Serial.println(a);
+  delay(500);
+}
+아두이노에 연결된 조도센서에서 값을 읽어와 조도센서의 값이 500이하일때 13번 핀에 전류가 흐르게 하여 LED를 점등시키고, 500 초과인 경우에는 LED가 꺼지게 하는 코드
+-------------------------
+프로세싱 코드
+import processing.serial.*;
+import processing.net.*;
+
+Serial p;
+Server s;
+Client c;
+
+void setup() {
+  size(400,400);
+  s = new Server(this, 12345);
+  p = new Serial(this, "COM5", 9600);
+}
+
+void draw() {
+  if(p.available()>0) {
+    String m = p.readStringUntil('\n');
+    if (m != null) {
+      print(m);
+      if(float(m) > 500) background(125,0,125);
+      else background(130,120,255);
+      textSize(128);
+      text(m,20,250);
+    }
+  }
+}
+아두이노에서 값을 받아와 프로세싱 윈도우 창에 조도센서의 값을 출력하고 500이상일 때 배경화면의 색을 보라색, 미만일 때는 파란색으로 변경하는 코드
