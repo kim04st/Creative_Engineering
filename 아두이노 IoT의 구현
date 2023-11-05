@@ -4,10 +4,10 @@ void setup() {
   pinMode(13, OUTPUT);
 }
 void loop() {
-  static unsigned  long Mil = 0;// 1/2초를 계산하는 프로그램
-  if (millis() - Mil >= 500) {  // 1/2초를 계산하는 프로그램
-    Mil = millis();             // 1/2초를 계산하는 프로그램
-    int msg = analogRead(A2);
+  static unsigned  long Mil = 0;
+  if (millis() - Mil >= 500) {  
+    Mil = millis();             
+    int msg = analogRead(A0);
     Serial.println(msg);
   }
   if (Serial.available() > 0) {
@@ -16,7 +16,6 @@ void loop() {
     if (m == "off") digitalWrite(13, LOW);
   }
 }
-
 processing
 import processing.net.*;
 import processing.serial.*;
